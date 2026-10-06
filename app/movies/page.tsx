@@ -18,10 +18,9 @@ interface ApiResponse {
   results: Movie[];
 }
 
-export default async function Home() {
+export default async function MoviesHubPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
 
-  // Função auxiliar para buscar os filmes
   async function fetchMovies(endpoint: string): Promise<Movie[]> {
     try {
       const response = await fetch(`${apiUrl}${endpoint}`, {
@@ -37,31 +36,25 @@ export default async function Home() {
     return [];
   }
 
-  // Busca as 4 listas em paralelo para maior performance
   const [trending, popular, topRated, nowPlaying] = await Promise.all([
-    fetchMovies("/tmdb/movies/trending?timeWindow=day"),
+    fetchMovies("/tmdb/movies/trending?timeWindow=week"),
     fetchMovies("/tmdb/movies/popular"),
     fetchMovies("/tmdb/movies/top-rated"),
     fetchMovies("/tmdb/movies/now-playing"),
   ]);
 
-  // Os 5 primeiros filmes dos "Em Alta" serão os destaques no topo
   const featuredMovies = trending.slice(0, 5);
-
-  // Remove os filmes em destaque da lista de trending para não ficarem repetidos logo abaixo
   const trendingList = trending.slice(5);
 
   return (
     <div className="pb-12">
-      {/* Banner de Destaque */}
       {featuredMovies.length > 0 && <HeroBanner movies={featuredMovies} />}
 
-      {/* Listas Horizontais de Filmes */}
       <div className="flex flex-col gap-2 -mt-16 md:-mt-32 relative z-20">
-        <MovieRow icon={<Flame className="w-5 h-5" />} title="Em Alta Hoje" movies={trendingList} />
-        <MovieRow icon={<Clapperboard className="w-5 h-5" />} title="Populares" movies={popular} />
-        <MovieRow icon={<Star className="w-5 h-5" />} title="Mais Bem Avaliados" movies={topRated} />
-        <MovieRow icon={<Ticket className="w-5 h-5" />} title="Em Cartaz nos Cinemas" movies={nowPlaying} />
+        <MovieRow icon={<Flame className="w-5 h-5" />} title="Filmes em Alta na Semana" movies={trendingList} />
+        <MovieRow icon={<Clapperboard className="w-5 h-5" />} title="Filmes Populares" movies={popular} />
+        <MovieRow icon={<Star className="w-5 h-5" />} title="Filmes Mais Bem Avaliados" movies={topRated} />
+        <MovieRow icon={<Ticket className="w-5 h-5" />} title="Filmes Em Cartaz" movies={nowPlaying} />
       </div>
     </div>
   );
