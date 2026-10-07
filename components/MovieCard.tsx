@@ -45,7 +45,7 @@ export function MovieCard({ id, title, posterPath, voteAverage, releaseDate, med
         </div>
 
         {/* Botão de Watchlist (Minha Lista) */}
-        <div className="absolute top-2 left-2 z-10" onClick={(e) => e.preventDefault()}>
+        <div className="absolute top-2 left-2 z-10">
           <WatchlistButton 
             tmdbId={id} 
             mediaType={mediaType} 

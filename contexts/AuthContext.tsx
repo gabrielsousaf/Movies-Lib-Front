@@ -9,6 +9,9 @@ interface User {
   email: string;
   displayName?: string;
   avatarUrl?: string;
+  bio?: string;
+  isPublic?: boolean;
+  createdAt?: string;
 }
 
 interface AuthContextType {
@@ -16,6 +19,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, user: User) => void;
   logout: () => void;
+  updateUser: (user: Partial<User>) => void;
   loading: boolean;
 }
 
@@ -24,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   token: null,
   login: () => {},
   logout: () => {},
+  updateUser: () => {},
   loading: true,
 });
 
@@ -64,8 +69,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.refresh();
   };
 
+  const updateUser = (updatedFields: Partial<User>) => {
+    if (!user) return;
+    const newUser = { ...user, ...updatedFields };
+    setUser(newUser);
+    localStorage.setItem("@movieslib:user", JSON.stringify(newUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

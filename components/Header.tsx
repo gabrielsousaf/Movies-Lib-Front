@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Film, User, LogOut, Settings, Bookmark, ChevronDown } from "lucide-react";
+import { Search, Film, User, LogOut, Settings, Bookmark, ChevronDown, List } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +10,8 @@ export function Header() {
   const [search, setSearch] = useState("");
   const router = useRouter();
   const { user, logout } = useAuth();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const avatarSrc = user?.avatarUrl?.startsWith("/") ? `${apiUrl}${user.avatarUrl}` : user?.avatarUrl;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +95,11 @@ export function Header() {
             <div className="relative group">
               <button className="flex items-center gap-2 text-zinc-400 hover:text-zinc-50 transition-colors focus:outline-none">
                 <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
-                  <User className="w-5 h-5 text-zinc-300" />
+                  {avatarSrc ? (
+                    <img src={avatarSrc} alt={user.username} className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-5 h-5 text-zinc-300" />
+                  )}
                 </div>
               </button>
 
@@ -110,6 +116,10 @@ export function Header() {
                   <Link href="/watchlist" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
                     <Bookmark className="w-4 h-4" />
                     Minha Lista
+                  </Link>
+                  <Link href="/lists" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                    <List className="w-4 h-4" />
+                    Minhas Listas
                   </Link>
                   <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
                     <Settings className="w-4 h-4" />

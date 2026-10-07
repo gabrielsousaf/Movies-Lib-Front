@@ -1,10 +1,12 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import { Star, Clock, Calendar, Play, Layers, ImageIcon } from "lucide-react";
 import { MovieRow } from "@/components/MovieRow";
 import { ImageGallery } from "@/components/ImageGallery";
 import { SeasonEpisodes } from "@/components/SeasonEpisodes";
 import { WatchlistButton } from "@/components/WatchlistButton";
+import { AddToListModal } from "@/components/AddToListModal";
+import { ReviewSection } from "@/components/ReviewSection";
 import { notFound } from "next/navigation";
 
 // Interface da Série
@@ -348,6 +350,14 @@ export default async function SeriesDetailsPage({
             </div>
           )}
 
+          {/* AVALIAÇÕES SECTION */}
+          <ReviewSection 
+            tmdbId={series.id} 
+            mediaType="TV" 
+            title={series.name} 
+            posterPath={series.poster_path} 
+          />
+
           {/* RECOMENDAÇÕES SECTION */}
           {series.recommendations?.results && series.recommendations.results.length > 0 && (
             <div>
@@ -400,3 +410,4 @@ export default async function SeriesDetailsPage({
     </div>
   );
 }
+

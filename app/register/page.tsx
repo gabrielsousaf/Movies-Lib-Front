@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -16,6 +17,18 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -29,10 +42,9 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Redireciona pro login ou faz login automático
-        router.push("/login?registered=true");
+        // Redireciona para verificação de e-mail
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
       } else {
-        // Tratar mensagens de erro do backend (array ou string)
         const errorMessage = Array.isArray(data.message) ? data.message[0] : data.message;
         setError(errorMessage || "Erro ao fazer cadastro.");
       }
@@ -96,11 +108,26 @@ export default function RegisterPage() {
           <div>
             <input
               type="password"
-              placeholder="Senha"
+              placeholder="Senha (mín. 8 caracteres, maiúscula, número, símbolo)"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-zinc-900/50 border border-zinc-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+            />
+            <p className="text-zinc-500 text-xs mt-1.5 ml-1">
+              Use pelo menos 8 caracteres, incluindo letras (A-a), números (0-9) e símbolos (@$!%*?&).
+            </p>
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Confirme a Senha"
+              required
+              minLength={8}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full bg-zinc-900/50 border border-zinc-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
             />
           </div>

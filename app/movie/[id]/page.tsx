@@ -4,6 +4,8 @@ import { Star, Clock, Calendar, Play, ImageIcon, Layers } from "lucide-react";
 import { MovieRow } from "@/components/MovieRow";
 import { ImageGallery } from "@/components/ImageGallery";
 import { WatchlistButton } from "@/components/WatchlistButton";
+import { AddToListModal } from "@/components/AddToListModal";
+import { ReviewSection } from "@/components/ReviewSection";
 import { notFound } from "next/navigation";
 
 // Definimos uma interface básica do retorno para não poluir muito o código
@@ -195,17 +197,29 @@ export default async function MovieDetailsPage({
               )}
 
               {/* Watchlist Button na página de detalhes */}
-              <div className="flex items-center ml-2 border-l border-zinc-700 pl-4">
-                <span className="mr-2 text-zinc-400 text-sm hidden md:inline">Salvar:</span>
-                <WatchlistButton 
+              <div className="flex flex-wrap items-center gap-3 ml-0 sm:ml-4 sm:border-l sm:border-zinc-700 sm:pl-4 mt-4 sm:mt-0">
+                <div className="flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 rounded-xl px-4 py-2 transition-colors">
+                  <span className="text-zinc-300 text-sm font-medium">Favoritar:</span>
+                  <WatchlistButton 
+                    tmdbId={movie.id}
+                    mediaType="movie"
+                    title={movie.title}
+                    posterPath={movie.poster_path}
+                    backdropPath={movie.backdrop_path}
+                    voteAverage={movie.vote_average}
+                    releaseDate={movie.release_date}
+                    className="w-8 h-8 rounded-full hover:bg-zinc-700 flex items-center justify-center"
+                  />
+                </div>
+                <AddToListModal
                   tmdbId={movie.id}
-                  mediaType="movie"
+                  mediaType="MOVIE"
                   title={movie.title}
                   posterPath={movie.poster_path}
                   backdropPath={movie.backdrop_path}
                   voteAverage={movie.vote_average}
                   releaseDate={movie.release_date}
-                  className="w-10 h-10 bg-zinc-900/80 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:scale-110 shadow-lg"
+                  buttonClassName="flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
                 />
               </div>
               
@@ -362,6 +376,14 @@ export default async function MovieDetailsPage({
             </div>
           )}
 
+          {/* AVALIAÇÕES SECTION */}
+          <ReviewSection 
+            tmdbId={movie.id} 
+            mediaType="MOVIE" 
+            title={movie.title} 
+            posterPath={movie.poster_path} 
+          />
+
           {/* RECOMENDAÇÕES SECTION */}
           {movie.recommendations?.results && movie.recommendations.results.length > 0 && (
             <div>
@@ -413,3 +435,4 @@ export default async function MovieDetailsPage({
     </div>
   );
 }
+

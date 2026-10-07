@@ -66,7 +66,8 @@ export function WatchlistButton({
   }, [tmdbId, user, token, apiMediaType]);
 
   const toggleWatchlist = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Impede de abrir links se estiver dentro de um Card
+    e.preventDefault(); // Impede default
+    e.stopPropagation(); // Impede o clique de subir para o Link do Card
     
     if (!user || !token) {
       // Redireciona para o login se não estiver logado
