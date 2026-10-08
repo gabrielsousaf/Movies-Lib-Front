@@ -22,7 +22,7 @@ interface Review {
     displayName: string | null;
     avatarUrl: string | null;
   };
-  hasLiked?: boolean; // Se o usuario logado deu like
+  isLiked?: boolean; // Se o usuario logado deu like
 }
 
 interface ReviewSectionProps {
@@ -145,12 +145,12 @@ export function ReviewSection({ tmdbId, mediaType, title, posterPath }: ReviewSe
     }
   };
 
-  const handleLike = async (reviewId: string, hasLiked: boolean) => {
+  const handleLike = async (reviewId: string) => {
     if (!token) return alert("Faça login para curtir.");
     
     try {
       const res = await fetch(`${apiUrl}/reviews/${reviewId}/like`, {
-        method: hasLiked ? "DELETE" : "POST",
+        method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
         }

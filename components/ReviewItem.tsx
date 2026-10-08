@@ -32,13 +32,13 @@ interface Review {
     displayName: string | null;
     avatarUrl: string | null;
   };
-  hasLiked?: boolean;
+  isLiked?: boolean;
 }
 
 interface ReviewItemProps {
   review: Review;
   apiUrl: string;
-  onLike: (reviewId: string, hasLiked: boolean) => void;
+  onLike: (reviewId: string) => void;
   isMyReview?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -186,14 +186,14 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
 
           <div className="flex items-center gap-3 mt-2">
             <button 
-              onClick={() => onLike(review.id, !!review.hasLiked)}
+              onClick={() => onLike(review.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                review.hasLiked 
+                review.isLiked 
                   ? "bg-primary-500/20 text-primary-500 border border-primary-500/50" 
                   : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-zinc-200"
               }`}
             >
-              <ThumbsUp className={`w-3.5 h-3.5 ${review.hasLiked ? "fill-primary-500" : ""}`} />
+              <ThumbsUp className={`w-3.5 h-3.5 ${review.isLiked ? "fill-primary-500" : ""}`} />
               <span>{review._count?.likes || 0}</span>
             </button>
             <button
