@@ -1,6 +1,7 @@
 import { MovieCard } from "@/components/MovieCard";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight, Users } from "lucide-react";
 
 interface SearchResult {
   id: number;
@@ -11,6 +12,14 @@ interface SearchResult {
   release_date?: string;
   first_air_date?: string;
   media_type: string; // 'movie', 'tv', 'person'
+}
+
+interface UserResult {
+  id: string;
+  username: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  bio: string | null;
 }
 
 interface ApiResponse {
@@ -28,50 +37,66 @@ export default async function SearchPage({
   const params = await searchParams;
   const query = typeof params.q === "string" ? params.q : "";
   const currentPage = typeof params.page === "string" ? parseInt(params.page) || 1 : 1;
-  const searchType = typeof params.type === "string" ? params.type : "multi"; // 'multi', 'movie', 'tv'
+  const searchType = typeof params.type === "string" ? params.type : "multi"; // 'multi', 'movie', 'tv', 'user'
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
 
   let results: SearchResult[] = [];
+  let userResults: UserResult[] = [];
   let totalResults = 0;
   let totalPages = 0;
 
   if (query) {
     try {
-      let endpoint = `/tmdb/search?query=${encodeURIComponent(query)}&page=${currentPage}`;
-      
-      if (searchType === "movie") {
-        endpoint = `/tmdb/movies/search?query=${encodeURIComponent(query)}&page=${currentPage}`;
-      } else if (searchType === "tv") {
-        endpoint = `/tmdb/series/search?query=${encodeURIComponent(query)}&page=${currentPage}`;
-      }
-
-      const response = await fetch(`${apiUrl}${endpoint}`, {
-        cache: "no-store", 
-      });
-
-      if (response.ok) {
-        const data: ApiResponse = await response.json();
-        
-        // Se for 'multi', o TMDB retorna tudo misturado, precisamos filtrar 'person'
-        // Se for 'movie' ou 'tv' direto, todos os resultados já são do tipo certo
-        if (searchType === "multi") {
-          results = (data.results || []).filter(
-            (item) => item.media_type === "movie" || item.media_type === "tv"
-          );
-        } else {
-          results = data.results || [];
+      if (searchType === "user") {
+        const response = await fetch(`${apiUrl}/users?q=${encodeURIComponent(query)}&limit=50`, {
+          cache: "no-store",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          userResults = data.data || [];
+          totalResults = userResults.length;
+          totalPages = 1; // Simplificado para busca local sem paginação complexa no momento
         }
+      } else {
+        let endpoint = `/tmdb/search?query=${encodeURIComponent(query)}&page=${currentPage}`;
         
-        totalResults = data.total_results || 0;
-        totalPages = data.total_pages || 0;
+        if (searchType === "movie") {
+          endpoint = `/tmdb/movies/search?query=${encodeURIComponent(query)}&page=${currentPage}`;
+        } else if (searchType === "tv") {
+          endpoint = `/tmdb/series/search?query=${encodeURIComponent(query)}&page=${currentPage}`;
+        }
+
+        const response = await fetch(`${apiUrl}${endpoint}`, {
+          cache: "no-store", 
+        });
+
+        if (response.ok) {
+          const data: ApiResponse = await response.json();
+          
+          if (searchType === "multi") {
+            results = (data.results || []).filter(
+              (item) => item.media_type === "movie" || item.media_type === "tv"
+            );
+          } else {
+            results = data.results || [];
+          }
+          
+          totalResults = data.total_results || 0;
+          totalPages = data.total_pages || 0;
+        }
       }
     } catch (error) {
       console.error("Erro ao buscar resultados:", error);
     }
   }
 
-  // Só renderiza até a página 500 porque a API do TMDB limita paginação em 500 páginas
   const maxPages = Math.min(totalPages, 500);
+
+  const getAvatarUrl = (url: string | null) => {
+    if (!url) return "https://via.placeholder.com/150";
+    if (url.startsWith("http")) return url;
+    return `${apiUrl}${url}`;
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -86,7 +111,7 @@ export default async function SearchPage({
         </p>
 
         {query && (
-          <div className="flex gap-4 mt-6">
+          <div className="flex flex-wrap gap-4 mt-6">
             <Link 
               href={`/search?q=${encodeURIComponent(query)}&type=multi`}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${searchType === 'multi' ? 'bg-zinc-100 text-black' : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'}`}
@@ -105,14 +130,41 @@ export default async function SearchPage({
             >
               Apenas Séries
             </Link>
+            <Link 
+              href={`/search?q=${encodeURIComponent(query)}&type=user`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${searchType === 'user' ? 'bg-zinc-100 text-black' : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'}`}
+            >
+              <Users className="w-4 h-4" /> Usuários
+            </Link>
           </div>
         )}
       </div>
 
       {!query ? (
         <div className="text-center py-20">
-          <p className="text-zinc-500 text-lg">Digite algo na barra de busca para encontrar filmes e séries.</p>
+          <p className="text-zinc-500 text-lg">Digite algo na barra de busca para encontrar filmes, séries ou usuários.</p>
         </div>
+      ) : searchType === "user" ? (
+        userResults.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-zinc-500 text-lg">Não encontramos nenhum usuário com "{query}".</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {userResults.map(user => (
+              <Link href={`/user/${user.username}`} key={user.id} className="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-xl p-5 flex gap-4 transition-colors">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0 border border-zinc-700">
+                  <Image src={getAvatarUrl(user.avatarUrl)} alt={user.username} fill className="object-cover" />
+                </div>
+                <div className="flex flex-col justify-center flex-1">
+                  <span className="font-bold text-zinc-100 text-lg line-clamp-1">{user.displayName || user.username}</span>
+                  <span className="text-zinc-400 text-sm">@{user.username}</span>
+                  {user.bio && <p className="text-zinc-500 text-xs mt-1 line-clamp-1">{user.bio}</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )
       ) : results.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-zinc-500 text-lg">Não encontramos nada correspondente a "{query}" nesta página.</p>
@@ -128,6 +180,7 @@ export default async function SearchPage({
                 posterPath={item.poster_path}
                 voteAverage={item.vote_average}
                 releaseDate={item.release_date || item.first_air_date}
+                mediaType={item.media_type as "movie" | "tv"}
               />
             ))}
           </div>
