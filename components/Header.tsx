@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export function Header() {
   const [search, setSearch] = useState("");
+  const [searchType, setSearchType] = useState("multi");
   const router = useRouter();
   const { user, logout } = useAuth();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
@@ -16,7 +17,7 @@ export function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (search.trim()) {
-      router.push(`/search?q=${encodeURIComponent(search)}`);
+      router.push(`/search?q=${encodeURIComponent(search)}&type=${searchType}`);
     }
   };
 
@@ -74,15 +75,27 @@ export function Header() {
         {/* Direita: Busca e Menu do Usuário */}
         <div className="flex items-center gap-4 flex-1 justify-end">
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="w-full max-w-[250px] relative hidden sm:block">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar..."
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-full py-1.5 pl-9 pr-4 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all"
-            />
-            <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <form onSubmit={handleSearch} className="w-full max-w-[320px] hidden sm:flex items-center bg-zinc-900 border border-zinc-800 rounded-full focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 transition-all overflow-hidden relative">
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="bg-transparent text-zinc-400 text-xs py-2 pl-3 pr-1 border-r border-zinc-800 focus:outline-none cursor-pointer hover:text-zinc-200"
+            >
+              <option value="multi" className="bg-zinc-900">Tudo</option>
+              <option value="movie" className="bg-zinc-900">Filmes</option>
+              <option value="tv" className="bg-zinc-900">Séries</option>
+              <option value="user" className="bg-zinc-900">Usuários</option>
+            </select>
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar..."
+                className="w-full bg-transparent py-2 pl-8 pr-4 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none"
+              />
+              <Search className="w-4 h-4 text-zinc-500 absolute left-2 top-1/2 -translate-y-1/2" />
+            </div>
           </form>
 
           {/* Ícone Lupa para Mobile (Aparece quando a barra de cima some) */}
