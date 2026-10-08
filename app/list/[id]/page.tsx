@@ -134,7 +134,16 @@ export default function ListDetailPage() {
                 {list.isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                 {list.isPublic ? "Pública" : "Privada"}
               </span>
-              <span>Criada por <span className="text-primary-500">{list.user?.displayName || list.user?.username || "Desconhecido"}</span></span>
+              <span>
+                Criada por{" "}
+                {list.user ? (
+                  <Link href={`/user/${list.user.username}`} className="text-primary-500 hover:text-primary-400 transition-colors">
+                    {list.user.displayName || list.user.username}
+                  </Link>
+                ) : (
+                  <span className="text-zinc-500">Desconhecido</span>
+                )}
+              </span>
               <span>{list.items.length} itens</span>
             </div>
           </div>
