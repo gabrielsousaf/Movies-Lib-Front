@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Film, User, LogOut, Settings, Bookmark, ChevronDown, List } from "lucide-react";
+import { Search, Film, User, LogOut, Settings, Bookmark, ChevronDown, List, Activity } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -122,6 +122,10 @@ export function Header() {
                   <div className="px-4 py-2 border-b border-zinc-800 mb-1">
                     <p className="text-sm text-zinc-100 font-medium">Olá, {user.displayName || user.username}</p>
                   </div>
+                  <Link href="/feed" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                    <Activity className="w-4 h-4" />
+                    Meu Feed
+                  </Link>
                   <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
                     <User className="w-4 h-4" />
                     Meu Perfil

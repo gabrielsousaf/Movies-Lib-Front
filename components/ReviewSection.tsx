@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Star, Trash2, Edit2, ThumbsUp, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { ReviewItem } from "./ReviewItem";
 
 interface Review {
   id: string;
@@ -210,25 +211,15 @@ export function ReviewSection({ tmdbId, mediaType, title, posterPath }: ReviewSe
           </div>
         ) : userReview && !isEditing ? (
           <div>
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-zinc-100 font-semibold mb-2">Sua Avaliação</h3>
-                {renderStars(userReview.rating)}
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => setIsEditing(true)} className="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md transition-colors" title="Editar">
-                  <Edit2 className="w-4 h-4" />
-                </button>
-                <button onClick={handleDelete} className="p-2 bg-zinc-800 hover:bg-red-500/20 hover:text-red-500 text-zinc-300 rounded-md transition-colors" title="Excluir">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            {userReview.content ? (
-              <p className="text-zinc-300 whitespace-pre-line">{userReview.content}</p>
-            ) : (
-              <p className="text-zinc-500 italic">Sem comentário adicionado.</p>
-            )}
+            <h3 className="text-zinc-100 font-semibold mb-4">Sua Avaliação</h3>
+            <ReviewItem
+              review={userReview as any}
+              apiUrl={apiUrl}
+              onLike={handleLike}
+              isMyReview={true}
+              onEdit={() => setIsEditing(true)}
+              onDelete={handleDelete}
+            />
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -283,54 +274,13 @@ export function ReviewSection({ tmdbId, mediaType, title, posterPath }: ReviewSe
           reviews
             .filter(r => r.user.id !== user?.id)
             .map((review) => (
-            <div key={review.id} className="bg-zinc-900/30 border border-zinc-800 rounded-xl p-5 flex gap-4">
-              <Link href={`/user/${review.user.username}`} className="shrink-0">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-800 border border-zinc-700">
-                  {review.user.avatarUrl ? (
-                    <img src={getAvatarSrc(review.user.avatarUrl)!} alt={review.user.username} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm font-bold">
-                      {review.user.username.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-              </Link>
-              
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <Link href={`/user/${review.user.username}`} className="font-semibold text-zinc-100 hover:text-primary-500 transition-colors">
-                      {review.user.displayName || review.user.username}
-                    </Link>
-                    <div className="text-xs text-zinc-500 mt-0.5">
-                      {new Date(review.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                  {renderStars(review.rating)}
-                </div>
-                
-                {review.content && (
-                  <p className="text-zinc-300 text-sm whitespace-pre-line mt-3 mb-4 leading-relaxed">
-                    {review.content}
-                  </p>
-                )}
-
-                <div className="flex items-center gap-2 mt-2">
-                  <button 
-                    onClick={() => handleLike(review.id, !!review.hasLiked)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                      review.hasLiked 
-                        ? "bg-primary-500/20 text-primary-500 border border-primary-500/50" 
-                        : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-zinc-200"
-                    }`}
-                  >
-                    <ThumbsUp className={`w-3.5 h-3.5 ${review.hasLiked ? "fill-primary-500" : ""}`} />
-                    <span>{review._count?.likes || 0}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
+              <ReviewItem
+                key={review.id}
+                review={review as any}
+                apiUrl={apiUrl}
+                onLike={handleLike}
+              />
+            ))
         )}
       </div>
     </section>
