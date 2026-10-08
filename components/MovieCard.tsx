@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import { WatchlistButton } from "./WatchlistButton";
+import { AddToListModal } from "./AddToListModal";
 
 interface MovieCardProps {
   id: number;
@@ -44,8 +45,8 @@ export function MovieCard({ id, title, posterPath, voteAverage, releaseDate, med
           <span>{rating}</span>
         </div>
 
-        {/* Botão de Watchlist (Minha Lista) */}
-        <div className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* Botão de Watchlist e Adicionar à Lista */}
+        <div className="absolute top-2 left-2 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <WatchlistButton 
             tmdbId={id} 
             mediaType={mediaType} 
@@ -54,6 +55,17 @@ export function MovieCard({ id, title, posterPath, voteAverage, releaseDate, med
             voteAverage={voteAverage} 
             releaseDate={releaseDate} 
             className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 hover:bg-black/80 hover:scale-110"
+          />
+          <AddToListModal
+            tmdbId={id}
+            mediaType={mediaType === "tv" ? "TV" : "MOVIE"}
+            title={title}
+            posterPath={posterPath || null}
+            backdropPath={null}
+            voteAverage={voteAverage}
+            releaseDate={releaseDate || null}
+            buttonClassName="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 hover:bg-black/80 hover:scale-110 flex items-center justify-center text-zinc-100 hover:text-primary-500 focus:outline-none"
+            iconOnly={true}
           />
         </div>
       </div>

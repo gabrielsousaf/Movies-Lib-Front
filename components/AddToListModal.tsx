@@ -14,6 +14,7 @@ interface AddToListModalProps {
   voteAverage: number | null;
   releaseDate: string | null;
   buttonClassName?: string;
+  iconOnly?: boolean;
 }
 
 export function AddToListModal({
@@ -24,7 +25,8 @@ export function AddToListModal({
   backdropPath,
   voteAverage,
   releaseDate,
-  buttonClassName = "flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-6 py-3 rounded-xl font-semibold transition-colors"
+  buttonClassName = "flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-6 py-3 rounded-xl font-semibold transition-colors",
+  iconOnly = false
 }: AddToListModalProps) {
   const { user, token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -90,13 +92,19 @@ export function AddToListModal({
     }
   };
 
+  const handleOpen = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(true);
+  };
+
   if (!user) return null; // Não mostra botão se não estiver logado
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className={buttonClassName}>
+      <button onClick={handleOpen} className={buttonClassName}>
         <ListPlus className="w-5 h-5" />
-        <span className="hidden sm:inline">Adicionar à Lista</span>
+        {!iconOnly && <span className="hidden sm:inline">Adicionar à Lista</span>}
       </button>
 
       {isOpen && (
