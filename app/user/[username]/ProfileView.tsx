@@ -173,13 +173,18 @@ export function ProfileView({ username }: { username: string }) {
     <div>
       {/* Profile Header */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left mb-8">
-        <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0">
-          <Image
-            src={getAvatarUrl(profile.avatarUrl)}
-            alt={profile.username}
-            fill
-            className="rounded-full object-cover border-4 border-zinc-800"
-          />
+        <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0 bg-zinc-800 rounded-full flex items-center justify-center border-4 border-zinc-800 overflow-hidden">
+          {profile.avatarUrl ? (
+            <img
+              src={getAvatarUrl(profile.avatarUrl)}
+              alt={profile.username}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-5xl font-bold text-zinc-500 uppercase">
+              {profile.username.charAt(0)}
+            </span>
+          )}
         </div>
         
         <div className="flex-1 w-full">
