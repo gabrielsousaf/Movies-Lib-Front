@@ -51,6 +51,15 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
   const [loadingComments, setLoadingComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [commentCount, setCommentCount] = useState(review._count?.comments || 0);
+  const [localIsLiked, setLocalIsLiked] = useState(review.isLiked || false);
+  const [localLikeCount, setLocalLikeCount] = useState(review._count?.likes || 0);
+
+  useEffect(() => {
+    setCommentCount(review._count?.comments || 0);
+    setLocalIsLiked(review.isLiked || false);
+    setLocalLikeCount(review._count?.likes || 0);
+  }, [review]);
 
   const getAvatarSrc = (url: string | null) => {
     if (!url) return null;
@@ -111,6 +120,7 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
       if (res.ok) {
         setNewComment("");
         loadComments();
+        setCommentCount((c) => c + 1);
       }
     } catch (err) {
       console.error(err);
@@ -132,10 +142,20 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
       
       if (res.ok) {
         loadComments();
+        setCommentCount((c) => Math.max(0, c - 1));
       }
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleLikeClick = () => {
+    // Optimistic update
+    setLocalIsLiked(!localIsLiked);
+    setLocalLikeCount(localIsLiked ? Math.max(0, localLikeCount - 1) : localLikeCount + 1);
+    
+    // Call parent handler (which hits API and re-fetches)
+    onLike(review.id);
   };
 
   return (
@@ -186,22 +206,22 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
 
           <div className="flex items-center gap-3 mt-2">
             <button 
-              onClick={() => onLike(review.id)}
+              onClick={handleLikeClick}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                review.isLiked 
+                localIsLiked 
                   ? "bg-primary-500/20 text-primary-500 border border-primary-500/50" 
                   : "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-zinc-200"
               }`}
             >
-              <ThumbsUp className={`w-3.5 h-3.5 ${review.isLiked ? "fill-primary-500" : ""}`} />
-              <span>{review._count?.likes || 0}</span>
+              <ThumbsUp className={`w-3.5 h-3.5 ${localIsLiked ? "fill-primary-500" : ""}`} />
+              <span>{localLikeCount}</span>
             </button>
             <button
               onClick={toggleComments}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-zinc-200 transition-colors"
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              <span>{review._count?.comments || 0}</span> Comentários
+              <span>{commentCount}</span> Comentários
             </button>
           </div>
         </div>
