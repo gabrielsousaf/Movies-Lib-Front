@@ -83,7 +83,7 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
   const loadComments = async () => {
     setLoadingComments(true);
     try {
-      const res = await fetch(`${apiUrl}/reviews/${review.id}/comments`);
+      const res = await fetch(`${apiUrl}/reviews/${review.id}/comments`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setComments(data.data);

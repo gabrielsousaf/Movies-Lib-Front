@@ -57,7 +57,10 @@ export function ReviewSection({ tmdbId, mediaType, title, posterPath }: ReviewSe
       const headers: Record<string, string> = {};
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const res = await fetch(`${apiUrl}/reviews/media/${tmdbId}?type=${mediaType}`, { headers });
+      const res = await fetch(`${apiUrl}/reviews/media/${tmdbId}?type=${mediaType}`, { 
+        headers,
+        cache: 'no-store'
+      });
       if (res.ok) {
         const data = await res.json();
         setReviews(data.data);
