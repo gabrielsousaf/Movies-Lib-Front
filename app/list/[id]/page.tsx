@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { MovieCard } from "@/components/MovieCard";
 import { List as ListIcon, Lock, Globe, Trash2, Edit2, Share2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface CustomListItem {
   id: string;
@@ -151,10 +152,10 @@ export default function ListDetailPage() {
           {isOwner && (
             <div className="flex gap-3">
               <button 
-                className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors cursor-pointer"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  alert("Link copiado para a área de transferência!");
+                  toast.success("Link copiado para a área de transferência!");
                 }}
               >
                 <Share2 className="w-4 h-4" /> Compartilhar

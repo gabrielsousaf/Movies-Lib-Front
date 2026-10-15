@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { Star, Clock, Calendar, Play, Layers, ImageIcon } from "lucide-react";
 import { MovieRow } from "@/components/MovieRow";
@@ -65,6 +65,51 @@ interface SeriesDetails {
       };
     };
   };
+}
+
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  try {
+    const response = await fetch(`${apiUrl}/tmdb/series/${id}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) return { title: "Série | MoviesLib" };
+    const series: SeriesDetails = await response.json();
+    const releaseYear = series.first_air_date ? ` (${series.first_air_date.substring(0, 4)})` : "";
+    const title = `${series.name}${releaseYear} - MoviesLib`;
+    const description = series.overview ? series.overview.slice(0, 160) + "..." : "Veja sinopse, trailer, temporadas, episódios e onde assistir no MoviesLib.";
+    const imageUrl = series.backdrop_path
+      ? `https://image.tmdb.org/t/p/w1280${series.backdrop_path}`
+      : series.poster_path
+      ? `https://image.tmdb.org/t/p/w780${series.poster_path}`
+      : undefined;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "video.tv_show",
+        images: imageUrl ? [{ url: imageUrl, alt: series.name }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: imageUrl ? [imageUrl] : [],
+      },
+    };
+  } catch {
+    return { title: "Série | MoviesLib" };
+  }
 }
 
 export default async function SeriesDetailsPage({

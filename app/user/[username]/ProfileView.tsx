@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Users, List, Star, Heart, FileText } from "lucide-react";
 import { MovieCard } from "@/components/MovieCard";
+import { toast } from "sonner";
 
 interface ProfileStats {
   id: string;
@@ -128,7 +129,7 @@ export function ProfileView({ username }: { username: string }) {
   };
 
   const toggleFollow = async () => {
-    if (!token) return alert("Faça login para seguir usuários.");
+    if (!token) return toast.error("Faça login para seguir outros usuários.");
     try {
       const method = isFollowing ? "DELETE" : "POST";
       const res = await fetch(`${apiUrl}/users/${username}/follow`, {
@@ -138,9 +139,17 @@ export function ProfileView({ username }: { username: string }) {
       if (res.ok) {
         setIsFollowing(!isFollowing);
         setFollowersCount(prev => isFollowing ? prev - 1 : prev + 1);
+        if (isFollowing) {
+          toast.info(`Você deixou de seguir @${username}`);
+        } else {
+          toast.success(`Você agora está seguindo @${username}!`);
+        }
+      } else {
+        toast.error("Erro ao atualizar seguidor.");
       }
     } catch (err) {
       console.error("Erro ao seguir/deixar de seguir.");
+      toast.error("Erro de conexão.");
     }
   };
 

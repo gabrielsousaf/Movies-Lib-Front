@@ -6,6 +6,7 @@ import { Star, Trash2, Edit2, ThumbsUp, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ReviewItem } from "./ReviewItem";
+import { toast } from "sonner";
 
 interface Review {
   id: string;
@@ -113,13 +114,16 @@ export function ReviewSection({ tmdbId, mediaType, title, posterPath }: ReviewSe
 
       if (res.ok) {
         setIsEditing(false);
+        toast.success(userReview ? "Avaliação atualizada!" : "Avaliação publicada!");
         fetchReviews(); // Recarrega
       } else {
         const data = await res.json();
         setErrorMsg(data.message || "Erro ao salvar avaliação.");
+        toast.error(data.message || "Erro ao salvar avaliação.");
       }
     } catch (err) {
       setErrorMsg("Erro de conexão.");
+      toast.error("Erro de conexão ao salvar avaliação.");
     } finally {
       setSubmitLoading(false);
     }
@@ -141,15 +145,19 @@ export function ReviewSection({ tmdbId, mediaType, title, posterPath }: ReviewSe
         setRating(5);
         setContent("");
         setIsEditing(false);
+        toast.success("Avaliação excluída com sucesso.");
         fetchReviews();
+      } else {
+        toast.error("Erro ao excluir avaliação.");
       }
     } catch (err) {
       console.error(err);
+      toast.error("Erro de conexão.");
     }
   };
 
   const handleLike = async (reviewId: string) => {
-    if (!token) return alert("Faça login para curtir.");
+    if (!token) return toast.error("Faça login para curtir avaliações.");
     
     try {
       const res = await fetch(`${apiUrl}/reviews/${reviewId}/like`, {

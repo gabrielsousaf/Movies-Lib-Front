@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Bookmark, BookmarkCheck } from "lucide-react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 interface WatchlistButtonProps {
@@ -89,6 +90,7 @@ export function WatchlistButton({
           },
         });
         setIsInWatchlist(false);
+        toast.info(`"${title}" removido da sua lista.`);
       } else {
         // Adicionar
         const payload = {
@@ -111,9 +113,11 @@ export function WatchlistButton({
           body: JSON.stringify(payload),
         });
         setIsInWatchlist(true);
+        toast.success(`"${title}" adicionado à sua lista!`);
       }
     } catch (error) {
       console.error("Erro ao alterar watchlist", error);
+      toast.error("Erro ao atualizar sua lista.");
     } finally {
       setLoading(false);
     }

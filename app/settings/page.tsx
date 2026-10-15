@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { Settings, Lock, Trash2, ArrowLeft, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
   const { user, token, loading: authLoading, logout } = useAuth();
@@ -56,14 +57,17 @@ export default function SettingsPage() {
       const data = await res.json();
       if (res.ok) {
         setPassSuccess("Senha alterada com sucesso!");
+        toast.success("Senha alterada com sucesso!");
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
       } else {
         setPassError(data.message || "Erro ao alterar a senha.");
+        toast.error(data.message || "Erro ao alterar a senha.");
       }
     } catch (err) {
       setPassError("Erro de conexão.");
+      toast.error("Erro de conexão ao alterar a senha.");
     } finally {
       setPassLoading(false);
       setTimeout(() => setPassSuccess(""), 4000);
@@ -88,16 +92,18 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        alert("Sua conta foi excluída com sucesso.");
+        toast.success("Sua conta foi excluída com sucesso.");
         logout();
         router.push("/");
       } else {
         const data = await res.json();
         setDeleteError(data.message || "Erro ao excluir a conta.");
+        toast.error(data.message || "Erro ao excluir a conta.");
         setDeleteLoading(false);
       }
     } catch (err) {
       setDeleteError("Erro de conexão.");
+      toast.error("Erro de conexão ao excluir conta.");
       setDeleteLoading(false);
     }
   };

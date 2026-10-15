@@ -64,6 +64,51 @@ interface MovieDetails {
   };
 }
 
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  try {
+    const response = await fetch(`${apiUrl}/tmdb/movies/${id}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) return { title: "Filme | MoviesLib" };
+    const movie: MovieDetails = await response.json();
+    const releaseYear = movie.release_date ? ` (${movie.release_date.substring(0, 4)})` : "";
+    const title = `${movie.title}${releaseYear} - MoviesLib`;
+    const description = movie.overview ? movie.overview.slice(0, 160) + "..." : "Veja sinopse, trailer, elenco e onde assistir no MoviesLib.";
+    const imageUrl = movie.backdrop_path
+      ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`
+      : movie.poster_path
+      ? `https://image.tmdb.org/t/p/w780${movie.poster_path}`
+      : undefined;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "video.movie",
+        images: imageUrl ? [{ url: imageUrl, alt: movie.title }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: imageUrl ? [imageUrl] : [],
+      },
+    };
+  } catch {
+    return { title: "Filme | MoviesLib" };
+  }
+}
+
 export default async function MovieDetailsPage({
   params,
 }: {

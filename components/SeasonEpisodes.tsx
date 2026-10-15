@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Star, Calendar, Clock, ImageIcon, PlayCircle, CheckCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface Season {
   id: number;
@@ -81,7 +82,7 @@ export function SeasonEpisodes({ seriesId, seasons }: SeasonEpisodesProps) {
   }, [seriesId, selectedSeason, token, apiUrl]);
 
   const toggleWatched = async (episodeNumber: number) => {
-    if (!token) return alert("Faça login para marcar como assistido.");
+    if (!token) return toast.error("Faça login para marcar episódios como assistidos.");
     
     const isWatched = watchedEpisodes.includes(episodeNumber);
     const method = isWatched ? "DELETE" : "POST";
@@ -91,8 +92,10 @@ export function SeasonEpisodes({ seriesId, seasons }: SeasonEpisodesProps) {
       // Optimistic update
       if (isWatched) {
         setWatchedEpisodes(prev => prev.filter(n => n !== episodeNumber));
+        toast.info(`Episódio ${episodeNumber} desmarcado.`);
       } else {
         setWatchedEpisodes(prev => [...prev, episodeNumber]);
+        toast.success(`Episódio ${episodeNumber} marcado como assistido!`);
       }
 
       const response = await fetch(`${apiUrl}/episodes/${endpoint}`, {

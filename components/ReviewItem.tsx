@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Star, ThumbsUp, MessageSquare, Trash2, Edit2, Send } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface ReviewComment {
   id: string;
@@ -121,9 +122,13 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
         setNewComment("");
         loadComments();
         setCommentCount((c) => c + 1);
+        toast.success("Comentário publicado!");
+      } else {
+        toast.error("Erro ao publicar comentário.");
       }
     } catch (err) {
       console.error(err);
+      toast.error("Erro de conexão.");
     } finally {
       setSubmittingComment(false);
     }
@@ -143,9 +148,13 @@ export function ReviewItem({ review, apiUrl, onLike, isMyReview, onEdit, onDelet
       if (res.ok) {
         loadComments();
         setCommentCount((c) => Math.max(0, c - 1));
+        toast.success("Comentário excluído.");
+      } else {
+        toast.error("Erro ao excluir comentário.");
       }
     } catch (err) {
       console.error(err);
+      toast.error("Erro de conexão.");
     }
   };
 

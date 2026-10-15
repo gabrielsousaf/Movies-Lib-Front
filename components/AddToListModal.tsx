@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ListPlus, X, Check, Plus } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface AddToListModalProps {
   tmdbId: number;
@@ -81,14 +82,14 @@ export function AddToListModal({
       });
 
       if (res.ok) {
-        alert("Adicionado com sucesso!");
+        toast.success("Adicionado à lista com sucesso!");
         setIsOpen(false);
       } else {
         const data = await res.json();
-        alert(data.message || "Erro ao adicionar à lista.");
+        toast.error(data.message || "Erro ao adicionar à lista.");
       }
     } catch (err) {
-      alert("Erro de conexão.");
+      toast.error("Erro de conexão ao adicionar à lista.");
     }
   };
 

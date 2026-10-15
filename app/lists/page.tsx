@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { List, Plus, Trash2, Edit2, Lock, Globe } from "lucide-react";
+import { toast } from "sonner";
 
 interface CustomList {
   id: string;
@@ -75,12 +76,15 @@ export default function ListsPage() {
         setTitle("");
         setDescription("");
         setIsPublic(true);
+        toast.success("Lista criada com sucesso!");
         fetchLists();
       } else {
-        alert("Erro ao criar lista.");
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.message || "Erro ao criar lista.");
       }
     } catch (err) {
       console.error(err);
+      toast.error("Erro de conexão ao criar lista.");
     } finally {
       setIsSubmitting(false);
     }
@@ -93,9 +97,15 @@ export default function ListsPage() {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) fetchLists();
+      if (res.ok) {
+        toast.success("Lista excluída com sucesso.");
+        fetchLists();
+      } else {
+        toast.error("Erro ao excluir lista.");
+      }
     } catch (err) {
       console.error(err);
+      toast.error("Erro de conexão.");
     }
   };
 
