@@ -20,7 +20,7 @@ interface ApiResponse {
 }
 
 export default async function MoviesHubPage() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   async function fetchMovies(endpoint: string): Promise<Movie[]> {
     try {

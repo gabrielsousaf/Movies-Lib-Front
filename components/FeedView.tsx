@@ -16,7 +16,7 @@ export function FeedView() {
   const [scope, setScope] = useState<"following" | "global">("following");
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   useEffect(() => {
     async function loadFeed() {

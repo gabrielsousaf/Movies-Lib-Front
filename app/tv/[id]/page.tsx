@@ -76,7 +76,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
   try {
     const response = await fetch(`${apiUrl}/tmdb/series/${id}`, {
       next: { revalidate: 3600 },
@@ -120,7 +120,7 @@ export default async function SeriesDetailsPage({
 }) {
   const resolvedParams = await params;
   const seriesId = resolvedParams.id;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   let series: SeriesDetails | null = null;
 

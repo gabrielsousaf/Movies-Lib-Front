@@ -44,7 +44,7 @@ export function WatchlistButton({
 
     const checkWatchlist = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
         const response = await fetch(
           `${apiUrl}/watchlist/check/${tmdbId}?type=${apiMediaType}`,
           {
@@ -81,7 +81,7 @@ export function WatchlistButton({
     }
 
     setLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
     try {
       if (status === targetStatus) {

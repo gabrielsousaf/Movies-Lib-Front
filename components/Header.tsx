@@ -13,7 +13,7 @@ export function Header() {
   const [searchType, setSearchType] = useState("multi");
   const router = useRouter();
   const { user, logout } = useAuth();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const avatarSrc = user?.avatarUrl?.startsWith("/") ? `${apiUrl}${user.avatarUrl}` : user?.avatarUrl;
 
   const handleSearch = (e: React.FormEvent) => {

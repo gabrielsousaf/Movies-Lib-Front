@@ -34,7 +34,7 @@ export function AddToListModal({
   const [lists, setLists] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   useEffect(() => {
     if (isOpen && token) {

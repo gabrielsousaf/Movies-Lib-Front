@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
     setPassLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
       const res = await fetch(`${apiUrl}/users/me/password`, {
         method: "PATCH",
         headers: {
@@ -86,7 +86,7 @@ export default function SettingsPage() {
     setDeleteLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
       const res = await fetch(`${apiUrl}/users/me`, {
         method: "DELETE",
         headers: {

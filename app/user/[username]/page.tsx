@@ -7,7 +7,7 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
   try {
     const res = await fetch(`${apiUrl}/users/${username}`, { next: { revalidate: 300 } });
     if (!res.ok) return { title: `@${username} | MoviesLib` };

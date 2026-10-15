@@ -33,7 +33,7 @@ export function CommandPalette() {
 
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const tmdbImageBase = "https://image.tmdb.org/t/p/w92";
 
   // Ouvinte global para Ctrl + K / Cmd + K e Custom Event

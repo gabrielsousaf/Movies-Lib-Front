@@ -30,7 +30,7 @@ export default async function PersonDetailsPage({
 }) {
   const resolvedParams = await params;
   const personId = resolvedParams.id;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   let person: PersonDetails | null = null;
 

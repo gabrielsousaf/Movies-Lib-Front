@@ -12,20 +12,8 @@ const nextConfig: NextConfig = {
         hostname: "via.placeholder.com",
       },
       {
-        protocol: "http",
-        hostname: "localhost",
-      },
-      {
-        protocol: "http",
-        hostname: "127.0.0.1",
-      },
-      {
         protocol: "https",
         hostname: "*.supabase.co",
-      },
-      {
-        protocol: "https",
-        hostname: "yccjmhfkzfatldbzekvr.supabase.co",
       },
       {
         protocol: "https",
@@ -33,11 +21,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "avatars.githubusercontent.com",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },

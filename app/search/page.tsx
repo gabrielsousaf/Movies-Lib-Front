@@ -38,7 +38,7 @@ export default async function SearchPage({
   const query = typeof params.q === "string" ? params.q : "";
   const currentPage = typeof params.page === "string" ? parseInt(params.page) || 1 : 1;
   const searchType = typeof params.type === "string" ? params.type : "multi"; // 'multi', 'movie', 'tv', 'user'
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   let results: SearchResult[] = [];
   let userResults: UserResult[] = [];

@@ -41,7 +41,7 @@ export default async function MoviesCategoryPage({
   
   const category = resolvedParams.category;
   const currentPage = typeof resolvedSearchParams.page === "string" ? parseInt(resolvedSearchParams.page) || 1 : 1;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   // Se a categoria não existir no nosso mapeamento, retorna 404
   if (!categoryTitles[category]) {

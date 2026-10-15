@@ -44,7 +44,7 @@ export function FavoriteButton({
 
     const checkFavorite = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
         const response = await fetch(
           `${apiUrl}/favorites/check/${tmdbId}?type=${apiMediaType}`,
           {
@@ -78,7 +78,7 @@ export function FavoriteButton({
     }
 
     setLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
     try {
       if (isFavorite) {
