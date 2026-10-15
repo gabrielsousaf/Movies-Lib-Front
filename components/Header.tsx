@@ -108,10 +108,23 @@ export function Header() {
               />
               <Search className="w-4 h-4 text-zinc-500 absolute left-2 top-1/2 -translate-y-1/2" />
             </div>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+              className="hidden lg:flex items-center gap-1 mr-2 px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 text-[10px] font-mono border border-zinc-700 hover:border-zinc-500 hover:text-zinc-200 transition-colors cursor-pointer shrink-0"
+              title="Abrir busca rápida (Ctrl + K)"
+            >
+              Ctrl K
+            </button>
           </form>
 
-          {/* Ícone Lupa para Mobile (Aparece quando a barra de cima some) */}
-          <button className="sm:hidden text-zinc-400 hover:text-zinc-50">
+          {/* Ícone Lupa para Mobile que abre o CommandPalette */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+            className="sm:hidden text-zinc-400 hover:text-zinc-50 p-2 cursor-pointer"
+            title="Buscar (Ctrl + K)"
+          >
             <Search className="w-5 h-5" />
           </button>
 

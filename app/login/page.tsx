@@ -92,10 +92,19 @@ export default function LoginPage() {
             />
           </div>
 
+          <div className="flex items-center justify-end -mt-2">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-zinc-400 hover:text-primary-400 transition-colors"
+            >
+              Esqueceu a senha?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>

@@ -20,6 +20,8 @@ export default function SettingsPage() {
 
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [confirmPhrase, setConfirmPhrase] = useState("");
 
   if (authLoading) return <div className="py-24 text-center">Carregando...</div>;
   if (!user) {
@@ -74,8 +76,9 @@ export default function SettingsPage() {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    if (!confirm("AVISO: Tem certeza absoluta que deseja excluir sua conta? Esta ação é IRREVERSÍVEL e apagará todos os seus dados, listas e avaliações!")) {
+  const handleConfirmDelete = async () => {
+    if (confirmPhrase.trim().toUpperCase() !== "DELETAR") {
+      toast.error("Digite 'DELETAR' para prosseguir com a exclusão.");
       return;
     }
 
@@ -93,6 +96,7 @@ export default function SettingsPage() {
 
       if (res.ok) {
         toast.success("Sua conta foi excluída com sucesso.");
+        setShowDeleteModal(false);
         logout();
         router.push("/");
       } else {
@@ -198,15 +202,77 @@ export default function SettingsPage() {
           )}
 
           <button
-            onClick={handleDeleteAccount}
-            disabled={deleteLoading}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+            onClick={() => {
+              setConfirmPhrase("");
+              setDeleteError("");
+              setShowDeleteModal(true);
+            }}
+            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
-            {deleteLoading ? "Excluindo..." : "Excluir Minha Conta"}
+            Excluir Minha Conta
           </button>
         </div>
       </div>
+
+      {/* Modal de Confirmação de Exclusão de Conta */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-zinc-950 border border-red-900/50 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl relative">
+            <div className="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mb-4 border border-red-500/30">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-2">
+              Excluir conta definitivamente?
+            </h3>
+
+            <p className="text-zinc-400 text-sm mb-4 leading-relaxed">
+              Esta ação é <span className="text-red-400 font-semibold">permanente e irreversível</span>. Todas as suas avaliações, listas, filmes salvos e conexões serão removidos do sistema.
+            </p>
+
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-lg p-3 mb-5">
+              <label className="block text-xs font-medium text-zinc-400 mb-2">
+                Para confirmar, digite <span className="text-red-400 font-bold uppercase">DELETAR</span> abaixo:
+              </label>
+              <input
+                type="text"
+                value={confirmPhrase}
+                onChange={(e) => setConfirmPhrase(e.target.value)}
+                placeholder="DELETAR"
+                className="w-full bg-zinc-950 border border-zinc-700 focus:border-red-500 text-white px-3 py-2 rounded-md outline-none text-sm font-mono tracking-wider"
+                autoFocus
+              />
+            </div>
+
+            {deleteError && (
+              <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-4 text-xs">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleteLoading}
+                className="px-4 py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={confirmPhrase.trim().toUpperCase() !== "DELETAR" || deleteLoading}
+                className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-red-950 disabled:text-zinc-600 text-white text-sm font-bold transition-all flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed shadow-lg shadow-red-950/50"
+              >
+                <Trash2 className="w-4 h-4" />
+                {deleteLoading ? "Excluindo..." : "Confirmar Exclusão"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { CommandPalette } from "@/components/CommandPalette";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "sonner";
 
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
           <Header />
+          <CommandPalette />
           <main className="flex-1 flex flex-col">
             {children}
           </main>
