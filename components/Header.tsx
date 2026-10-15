@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { NotificationsDropdown } from "./NotificationsDropdown";
+
 export function Header() {
   const [search, setSearch] = useState("");
   const [searchType, setSearchType] = useState("multi");
@@ -103,50 +105,54 @@ export function Header() {
             <Search className="w-5 h-5" />
           </button>
 
-          {/* Menu de Usuário */}
+          {/* Menu de Usuário e Notificações */}
           {user ? (
-            <div className="relative group">
-              <button className="flex items-center gap-2 text-zinc-400 hover:text-zinc-50 transition-colors focus:outline-none">
-                <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
-                  {avatarSrc ? (
-                    <img src={avatarSrc} alt={user.username} className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-5 h-5 text-zinc-300" />
-                  )}
-                </div>
-              </button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <NotificationsDropdown />
 
-              {/* Dropdown Menu (Aparece no Hover) */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                <div className="flex flex-col py-2">
-                  <div className="px-4 py-2 border-b border-zinc-800 mb-1">
-                    <p className="text-sm text-zinc-100 font-medium">Olá, {user.displayName || user.username}</p>
+              <div className="relative group">
+                <button className="flex items-center gap-2 text-zinc-400 hover:text-zinc-50 transition-colors focus:outline-none">
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
+                    {avatarSrc ? (
+                      <img src={avatarSrc} alt={user.username} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5 text-zinc-300" />
+                    )}
                   </div>
-                  <Link href="/feed" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
-                    <Activity className="w-4 h-4" />
-                    Meu Feed
-                  </Link>
-                  <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
-                    <User className="w-4 h-4" />
-                    Meu Perfil
-                  </Link>
-                  <Link href="/watchlist" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
-                    <Bookmark className="w-4 h-4" />
-                    Minha Lista
-                  </Link>
-                  <Link href="/lists" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
-                    <List className="w-4 h-4" />
-                    Minhas Listas
-                  </Link>
-                  <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
-                    <Settings className="w-4 h-4" />
-                    Configurações
-                  </Link>
-                  <div className="h-px bg-zinc-800 my-1" />
-                  <button onClick={() => logout()} className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-zinc-800 w-full text-left">
-                    <LogOut className="w-4 h-4" />
-                    Sair
-                  </button>
+                </button>
+
+                {/* Dropdown Menu (Aparece no Hover) */}
+                <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="flex flex-col py-2">
+                    <div className="px-4 py-2 border-b border-zinc-800 mb-1">
+                      <p className="text-sm text-zinc-100 font-medium">Olá, {user.displayName || user.username}</p>
+                    </div>
+                    <Link href="/feed" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                      <Activity className="w-4 h-4" />
+                      Meu Feed
+                    </Link>
+                    <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                      <User className="w-4 h-4" />
+                      Meu Perfil
+                    </Link>
+                    <Link href="/watchlist" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                      <Bookmark className="w-4 h-4" />
+                      Minha Lista
+                    </Link>
+                    <Link href="/lists" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                      <List className="w-4 h-4" />
+                      Minhas Listas
+                    </Link>
+                    <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+                      <Settings className="w-4 h-4" />
+                      Configurações
+                    </Link>
+                    <div className="h-px bg-zinc-800 my-1" />
+                    <button onClick={() => logout()} className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-zinc-800 w-full text-left">
+                      <LogOut className="w-4 h-4" />
+                      Sair
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
