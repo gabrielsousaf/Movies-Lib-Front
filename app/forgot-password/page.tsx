@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -18,7 +19,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const apiUrl = API_URL;
       const res = await fetch(`${apiUrl}/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

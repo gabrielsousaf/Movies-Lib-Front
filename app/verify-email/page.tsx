@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -79,7 +80,7 @@ function VerifyEmailForm() {
     setLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const apiUrl = API_URL;
       const response = await fetch(`${apiUrl}/auth/verify-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

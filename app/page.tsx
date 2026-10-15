@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import { HeroBanner } from "@/components/HeroBanner";
 import { MovieRow } from "@/components/MovieRow";
 import { Flame, Clapperboard, Star, Ticket } from "lucide-react";
@@ -19,7 +20,7 @@ interface ApiResponse {
 }
 
 export default async function Home() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   // Função auxiliar para buscar os filmes
   async function fetchMovies(endpoint: string): Promise<Movie[]> {

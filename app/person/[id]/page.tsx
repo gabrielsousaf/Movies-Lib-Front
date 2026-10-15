@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import Image from "next/image";
 import { MovieRow } from "@/components/MovieRow";
 import { notFound } from "next/navigation";
@@ -30,7 +31,7 @@ export default async function PersonDetailsPage({
 }) {
   const resolvedParams = await params;
   const personId = resolvedParams.id;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   let person: PersonDetails | null = null;
 

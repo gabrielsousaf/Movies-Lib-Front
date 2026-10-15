@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -39,7 +40,7 @@ export function SeasonEpisodes({ seriesId, seasons }: SeasonEpisodesProps) {
   
   const [watchedEpisodes, setWatchedEpisodes] = useState<number[]>([]); // array de episode_number
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   useEffect(() => {
     const fetchEpisodes = async () => {

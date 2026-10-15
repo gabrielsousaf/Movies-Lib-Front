@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,7 +33,7 @@ export default function ProfilePage() {
     setDisplayName(user.displayName || user.username);
     setBio(user.bio || "");
     // Se o avatar for uma rota relativa da nossa API, colocamos a URL base completa
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const apiUrl = API_URL;
     const currentAvatar = user.avatarUrl?.startsWith("/") 
       ? `${apiUrl}${user.avatarUrl}` 
       
@@ -50,7 +51,7 @@ export default function ProfilePage() {
     setErrorMsg("");
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const apiUrl = API_URL;
       const formData = new FormData();
       formData.append("file", file);
 
@@ -87,7 +88,7 @@ export default function ProfilePage() {
     setLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const apiUrl = API_URL;
       const response = await fetch(`${apiUrl}/users/me`, {
         method: "PATCH",
         headers: {

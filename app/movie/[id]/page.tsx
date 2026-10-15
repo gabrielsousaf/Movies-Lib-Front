@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Clock, Calendar, Play, ImageIcon, Layers } from "lucide-react";
@@ -73,7 +74,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
   try {
     const response = await fetch(`${apiUrl}/tmdb/movies/${id}`, {
       next: { revalidate: 3600 },
@@ -117,7 +118,7 @@ export default async function MovieDetailsPage({
 }) {
   const resolvedParams = await params;
   const movieId = resolvedParams.id;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   let movie: MovieDetails | null = null;
 

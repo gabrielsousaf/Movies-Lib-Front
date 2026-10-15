@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,7 +30,7 @@ export default function ListsPage() {
   const [isPublic, setIsPublic] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   useEffect(() => {
     if (authLoading) return;

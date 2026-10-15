@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useState, useEffect, useRef } from "react";
 import { Bell, CheckCheck, Heart, MessageSquare, UserPlus } from "lucide-react";
@@ -31,7 +32,7 @@ export function NotificationsDropdown() {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   useEffect(() => {
     if (!token || !user) return;

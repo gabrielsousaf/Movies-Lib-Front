@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import { HeroBanner } from "@/components/HeroBanner";
 import { MovieRow } from "@/components/MovieRow";
 import { Flame, Clapperboard, Star, SlidersHorizontal } from "lucide-react";
@@ -20,7 +21,7 @@ interface ApiResponse {
 }
 
 export default async function SeriesHubPage() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   async function fetchSeries(endpoint: string): Promise<Series[]> {
     try {

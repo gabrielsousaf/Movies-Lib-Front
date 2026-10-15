@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import Link from "next/link";
 import { Search, Film, User, LogOut, Settings, Bookmark, ChevronDown, List, Activity } from "lucide-react";
@@ -13,7 +14,7 @@ export function Header() {
   const [searchType, setSearchType] = useState("multi");
   const router = useRouter();
   const { user, logout } = useAuth();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
   const avatarSrc = user?.avatarUrl?.startsWith("/") ? `${apiUrl}${user.avatarUrl}` : user?.avatarUrl;
 
   const handleSearch = (e: React.FormEvent) => {

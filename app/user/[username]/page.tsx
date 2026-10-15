@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import { ProfileView } from "./ProfileView";
 import type { Metadata } from "next";
 
@@ -7,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
   try {
     const res = await fetch(`${apiUrl}/users/${username}`, { next: { revalidate: 300 } });
     if (!res.ok) return { title: `@${username} | MoviesLib` };

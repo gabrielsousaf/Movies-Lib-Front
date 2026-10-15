@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,7 +45,7 @@ export function WatchlistButton({
 
     const checkWatchlist = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+        const apiUrl = API_URL;
         const response = await fetch(
           `${apiUrl}/watchlist/check/${tmdbId}?type=${apiMediaType}`,
           {
@@ -81,7 +82,7 @@ export function WatchlistButton({
     }
 
     setLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const apiUrl = API_URL;
 
     try {
       if (status === targetStatus) {

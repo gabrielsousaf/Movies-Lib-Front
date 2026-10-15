@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/lib/api";
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -46,7 +47,7 @@ export default function SettingsPage() {
 
     setPassLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const apiUrl = API_URL;
       const res = await fetch(`${apiUrl}/users/me/password`, {
         method: "PATCH",
         headers: {
@@ -86,7 +87,7 @@ export default function SettingsPage() {
     setDeleteLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const apiUrl = API_URL;
       const res = await fetch(`${apiUrl}/users/me`, {
         method: "DELETE",
         headers: {

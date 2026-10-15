@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import { MovieCard } from "@/components/MovieCard";
 import { CatalogFilterBar } from "@/components/CatalogFilterBar";
 import Link from "next/link";
@@ -40,7 +41,7 @@ export default async function SeriesCategoryPage({
   
   const category = resolvedParams.category;
   const currentPage = typeof resolvedSearchParams.page === "string" ? parseInt(resolvedSearchParams.page) || 1 : 1;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   // Se a categoria não existir no nosso mapeamento, retorna 404
   if (!categoryTitles[category]) {

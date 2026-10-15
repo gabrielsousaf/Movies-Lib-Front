@@ -1,3 +1,4 @@
+import { API_URL } from "@/lib/api";
 import { MovieCard } from "@/components/MovieCard";
 import Link from "next/link";
 import Image from "next/image";
@@ -38,7 +39,7 @@ export default async function SearchPage({
   const query = typeof params.q === "string" ? params.q : "";
   const currentPage = typeof params.page === "string" ? parseInt(params.page) || 1 : 1;
   const searchType = typeof params.type === "string" ? params.type : "multi"; // 'multi', 'movie', 'tv', 'user'
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiUrl = API_URL;
 
   let results: SearchResult[] = [];
   let userResults: UserResult[] = [];
