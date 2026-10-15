@@ -48,6 +48,11 @@ export function Header() {
               
               <div className="absolute left-0 top-[calc(100%-8px)] mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-md shadow-lg opacity-0 invisible group-hover/movies:opacity-100 group-hover/movies:visible transition-all duration-200">
                 <div className="flex flex-col py-2">
+                  <Link href="/movies/explore" className="px-4 py-2 text-primary-400 font-semibold hover:bg-zinc-800 hover:text-primary-300 transition-colors flex items-center justify-between">
+                    Explorar com Filtros
+                    <span className="text-[10px] bg-primary-500/20 text-primary-400 px-1.5 py-0.5 rounded">Novo</span>
+                  </Link>
+                  <div className="h-px bg-zinc-800/80 my-1" />
                   <Link href="/movies/popular" className="px-4 py-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors">Populares</Link>
                   <Link href="/movies/trending" className="px-4 py-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors">Em Alta</Link>
                   <Link href="/movies/top-rated" className="px-4 py-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors">Mais Avaliados</Link>
@@ -65,6 +70,11 @@ export function Header() {
               
               <div className="absolute left-0 top-[calc(100%-8px)] mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-md shadow-lg opacity-0 invisible group-hover/series:opacity-100 group-hover/series:visible transition-all duration-200">
                 <div className="flex flex-col py-2">
+                  <Link href="/series/explore" className="px-4 py-2 text-primary-400 font-semibold hover:bg-zinc-800 hover:text-primary-300 transition-colors flex items-center justify-between">
+                    Explorar com Filtros
+                    <span className="text-[10px] bg-primary-500/20 text-primary-400 px-1.5 py-0.5 rounded">Novo</span>
+                  </Link>
+                  <div className="h-px bg-zinc-800/80 my-1" />
                   <Link href="/series/popular" className="px-4 py-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors">Populares</Link>
                   <Link href="/series/trending" className="px-4 py-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors">Em Alta</Link>
                   <Link href="/series/top-rated" className="px-4 py-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors">Mais Avaliadas</Link>
