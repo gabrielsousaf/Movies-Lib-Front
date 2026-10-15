@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Bookmark, BookmarkCheck, Eye, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,8 @@ interface WatchlistButtonProps {
   backdropPath?: string | null;
   voteAverage?: number;
   releaseDate?: string;
-  className?: string; // Optional styling
+  className?: string;
+  showWatchedToggle?: boolean;
 }
 
 export function WatchlistButton({
@@ -26,13 +27,13 @@ export function WatchlistButton({
   voteAverage,
   releaseDate,
   className = "",
+  showWatchedToggle = false,
 }: WatchlistButtonProps) {
   const { user, token } = useAuth();
-  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [status, setStatus] = useState<"WATCHLIST" | "WATCHED" | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // MediaType is stored as uppercase MOVIE or TV in backend
   const apiMediaType = mediaType.toUpperCase();
 
   useEffect(() => {
@@ -44,17 +45,18 @@ export function WatchlistButton({
     const checkWatchlist = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
-        // To accurately check we also should send mediaType but the backend route is `check/:tmdbId`
-        // so it might check globally by ID.
-        const response = await fetch(`${apiUrl}/watchlist/check/${tmdbId}?mediaType=${apiMediaType}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${apiUrl}/watchlist/check/${tmdbId}?type=${apiMediaType}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
-          setIsInWatchlist(data.inWatchlist);
+          setStatus(data.inList ? data.status : null);
         }
       } catch (error) {
         console.error("Erro ao checar watchlist", error);
@@ -66,12 +68,14 @@ export function WatchlistButton({
     checkWatchlist();
   }, [tmdbId, user, token, apiMediaType]);
 
-  const toggleWatchlist = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Impede default
-    e.stopPropagation(); // Impede o clique de subir para o Link do Card
-    
+  const handleSetStatus = async (
+    e: React.MouseEvent,
+    targetStatus: "WATCHLIST" | "WATCHED"
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!user || !token) {
-      // Redireciona para o login se não estiver logado
       router.push("/login");
       return;
     }
@@ -80,31 +84,35 @@ export function WatchlistButton({
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
 
     try {
-      if (isInWatchlist) {
-        // Remover
-        // Note that delete usually accepts the ID but we might need mediaType as well.
-        await fetch(`${apiUrl}/watchlist/${tmdbId}?mediaType=${apiMediaType}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setIsInWatchlist(false);
-        toast.info(`"${title}" removido da sua lista.`);
+      if (status === targetStatus) {
+        // Se já está com esse status, remove da lista
+        const res = await fetch(
+          `${apiUrl}/watchlist/${tmdbId}?type=${apiMediaType}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.ok) {
+          setStatus(null);
+          toast.info(`"${title}" removido da sua lista.`);
+        }
       } else {
-        // Adicionar
+        // Upsert com o novo status (WATCHLIST ou WATCHED)
         const payload = {
           tmdbId,
           mediaType: apiMediaType,
           title,
-          posterPath,
-          backdropPath,
-          voteAverage,
-          releaseDate,
-          status: "WATCHLIST"
+          posterPath: posterPath || undefined,
+          backdropPath: backdropPath || undefined,
+          voteAverage: voteAverage || undefined,
+          releaseDate: releaseDate || undefined,
+          status: targetStatus,
         };
 
-        await fetch(`${apiUrl}/watchlist`, {
+        const res = await fetch(`${apiUrl}/watchlist`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -112,8 +120,15 @@ export function WatchlistButton({
           },
           body: JSON.stringify(payload),
         });
-        setIsInWatchlist(true);
-        toast.success(`"${title}" adicionado à sua lista!`);
+
+        if (res.ok) {
+          setStatus(targetStatus);
+          if (targetStatus === "WATCHED") {
+            toast.success(`"${title}" marcado como Já Assistido!`);
+          } else {
+            toast.success(`"${title}" salvo em Quero Assistir!`);
+          }
+        }
       }
     } catch (error) {
       console.error("Erro ao alterar watchlist", error);
@@ -123,14 +138,67 @@ export function WatchlistButton({
     }
   };
 
+  if (showWatchedToggle) {
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={(e) => handleSetStatus(e, "WATCHLIST")}
+          disabled={loading}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer disabled:opacity-50 ${
+            status === "WATCHLIST"
+              ? "bg-primary-500/20 border-primary-500 text-primary-400"
+              : "bg-zinc-900/80 border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-600"
+          }`}
+        >
+          {status === "WATCHLIST" ? (
+            <BookmarkCheck className="w-4 h-4 text-primary-500 fill-primary-500" />
+          ) : (
+            <Bookmark className="w-4 h-4" />
+          )}
+          <span>{status === "WATCHLIST" ? "Na Lista" : "Quero Assistir"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => handleSetStatus(e, "WATCHED")}
+          disabled={loading}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer disabled:opacity-50 ${
+            status === "WATCHED"
+              ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
+              : "bg-zinc-900/80 border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:border-zinc-600"
+          }`}
+        >
+          {status === "WATCHED" ? (
+            <Check className="w-4 h-4 text-emerald-400" />
+          ) : (
+            <Eye className="w-4 h-4" />
+          )}
+          <span>{status === "WATCHED" ? "Assistido" : "Já Assisti"}</span>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <button
-      onClick={toggleWatchlist}
+      type="button"
+      onClick={(e) =>
+        handleSetStatus(e, status === "WATCHED" ? "WATCHED" : "WATCHLIST")
+      }
       disabled={loading}
-      title={isInWatchlist ? "Remover da Minha Lista" : "Adicionar à Minha Lista"}
-      className={`flex items-center justify-center transition-all duration-300 disabled:opacity-50 focus:outline-none ${className}`}
+      title={
+        status === "WATCHED"
+          ? "Já Assistido (clique para remover)"
+          : status === "WATCHLIST"
+          ? "Remover da Minha Lista"
+          : "Adicionar à Minha Lista"
+      }
+      className={`flex items-center justify-center transition-all duration-300 disabled:opacity-50 focus:outline-none cursor-pointer ${className}`}
     >
-      {isInWatchlist ? (
+      {status === "WATCHED" ? (
+        <Eye className="w-5 h-5 text-emerald-400" />
+      ) : status === "WATCHLIST" ? (
         <BookmarkCheck className="w-5 h-5 text-primary-500 fill-primary-500" />
       ) : (
         <Bookmark className="w-5 h-5 text-zinc-100 group-hover:text-primary-500 hover:text-primary-400" />

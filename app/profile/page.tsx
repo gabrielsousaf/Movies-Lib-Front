@@ -35,6 +35,7 @@ export default function ProfilePage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
     const currentAvatar = user.avatarUrl?.startsWith("/") 
       ? `${apiUrl}${user.avatarUrl}` 
+      
       : (user.avatarUrl || "");
       
     setAvatarUrl(currentAvatar);

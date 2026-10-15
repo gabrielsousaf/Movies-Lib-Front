@@ -5,9 +5,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Film } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,19 +25,23 @@ export default function LoginPage() {
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ login: identifier, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         login(data.accessToken, data.user);
+        toast.success(`Bem-vindo de volta, ${data.user.displayName || data.user.username}!`);
         router.push("/");
       } else {
-        setError(data.message || "Erro ao fazer login. Verifique suas credenciais.");
+        const msg = Array.isArray(data.message) ? data.message[0] : data.message;
+        setError(msg || "Erro ao fazer login. Verifique suas credenciais.");
+        toast.error(msg || "Credenciais inválidas.");
       }
     } catch (err) {
       setError("Erro de conexão com o servidor.");
+      toast.error("Erro de conexão com o servidor.");
     } finally {
       setLoading(false);
     }
@@ -72,11 +77,11 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <input
-              type="email"
-              placeholder="Email"
+              type="text"
+              placeholder="Email ou Nome de usuário"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               className="w-full bg-zinc-900/50 border border-zinc-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
             />
           </div>

@@ -5,6 +5,7 @@ import { MovieRow } from "@/components/MovieRow";
 import { ImageGallery } from "@/components/ImageGallery";
 import { SeasonEpisodes } from "@/components/SeasonEpisodes";
 import { WatchlistButton } from "@/components/WatchlistButton";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToListModal } from "@/components/AddToListModal";
 import { ReviewSection } from "@/components/ReviewSection";
 import { notFound } from "next/navigation";
@@ -235,10 +236,9 @@ export default async function SeriesDetailsPage({
                 </div>
               )}
 
-              {/* Watchlist Button na página de detalhes */}
-              <div className="flex items-center ml-2 border-l border-zinc-700 pl-4">
-                <span className="mr-2 text-zinc-400 text-sm hidden md:inline">Salvar:</span>
-                <WatchlistButton 
+              {/* Ações: Quero Assistir, Já Assisti, Favoritar e Adicionar à Lista */}
+              <div className="flex flex-wrap items-center gap-2 ml-0 sm:ml-2 sm:border-l sm:border-zinc-700 sm:pl-4 mt-4 sm:mt-0">
+                <WatchlistButton
                   tmdbId={series.id}
                   mediaType="tv"
                   title={series.name}
@@ -246,7 +246,27 @@ export default async function SeriesDetailsPage({
                   backdropPath={series.backdrop_path}
                   voteAverage={series.vote_average}
                   releaseDate={series.first_air_date}
-                  className="w-10 h-10 bg-zinc-900/80 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:scale-110 shadow-lg"
+                  showWatchedToggle={true}
+                />
+                <FavoriteButton
+                  tmdbId={series.id}
+                  mediaType="tv"
+                  title={series.name}
+                  posterPath={series.poster_path}
+                  backdropPath={series.backdrop_path}
+                  voteAverage={series.vote_average}
+                  releaseDate={series.first_air_date}
+                  showLabel={true}
+                />
+                <AddToListModal
+                  tmdbId={series.id}
+                  mediaType="TV"
+                  title={series.name}
+                  posterPath={series.poster_path}
+                  backdropPath={series.backdrop_path}
+                  voteAverage={series.vote_average}
+                  releaseDate={series.first_air_date}
+                  buttonClassName="flex items-center gap-2 bg-zinc-900/80 border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-600 text-zinc-200 px-4 py-2 rounded-xl text-sm font-medium transition-colors cursor-pointer"
                 />
               </div>
               

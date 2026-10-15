@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { CommandPalette } from "@/components/CommandPalette";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "sonner";
@@ -33,6 +34,7 @@ export default function RootLayout({
           <main className="flex-1 flex flex-col">
             {children}
           </main>
+          <Footer />
           <Toaster richColors position="top-right" theme="dark" closeButton />
         </AuthProvider>
       </body>

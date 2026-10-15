@@ -4,6 +4,7 @@ import { Star, Clock, Calendar, Play, ImageIcon, Layers } from "lucide-react";
 import { MovieRow } from "@/components/MovieRow";
 import { ImageGallery } from "@/components/ImageGallery";
 import { WatchlistButton } from "@/components/WatchlistButton";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToListModal } from "@/components/AddToListModal";
 import { ReviewSection } from "@/components/ReviewSection";
 import { notFound } from "next/navigation";
@@ -241,21 +242,28 @@ export default async function MovieDetailsPage({
                 </div>
               )}
 
-              {/* Watchlist Button na página de detalhes */}
-              <div className="flex flex-wrap items-center gap-3 ml-0 sm:ml-4 sm:border-l sm:border-zinc-700 sm:pl-4 mt-4 sm:mt-0">
-                <div className="flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 rounded-xl px-4 py-2 transition-colors">
-                  <span className="text-zinc-300 text-sm font-medium">Favoritar:</span>
-                  <WatchlistButton 
-                    tmdbId={movie.id}
-                    mediaType="movie"
-                    title={movie.title}
-                    posterPath={movie.poster_path}
-                    backdropPath={movie.backdrop_path}
-                    voteAverage={movie.vote_average}
-                    releaseDate={movie.release_date}
-                    className="w-8 h-8 rounded-full hover:bg-zinc-700 flex items-center justify-center"
-                  />
-                </div>
+              {/* Ações: Quero Assistir, Já Assisti, Favoritar e Adicionar à Lista */}
+              <div className="flex flex-wrap items-center gap-2 ml-0 sm:ml-4 sm:border-l sm:border-zinc-700 sm:pl-4 mt-4 sm:mt-0">
+                <WatchlistButton
+                  tmdbId={movie.id}
+                  mediaType="movie"
+                  title={movie.title}
+                  posterPath={movie.poster_path}
+                  backdropPath={movie.backdrop_path}
+                  voteAverage={movie.vote_average}
+                  releaseDate={movie.release_date}
+                  showWatchedToggle={true}
+                />
+                <FavoriteButton
+                  tmdbId={movie.id}
+                  mediaType="movie"
+                  title={movie.title}
+                  posterPath={movie.poster_path}
+                  backdropPath={movie.backdrop_path}
+                  voteAverage={movie.vote_average}
+                  releaseDate={movie.release_date}
+                  showLabel={true}
+                />
                 <AddToListModal
                   tmdbId={movie.id}
                   mediaType="MOVIE"
@@ -264,7 +272,7 @@ export default async function MovieDetailsPage({
                   backdropPath={movie.backdrop_path}
                   voteAverage={movie.vote_average}
                   releaseDate={movie.release_date}
-                  buttonClassName="flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                  buttonClassName="flex items-center gap-2 bg-zinc-900/80 border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-600 text-zinc-200 px-4 py-2 rounded-xl text-sm font-medium transition-colors cursor-pointer"
                 />
               </div>
               
