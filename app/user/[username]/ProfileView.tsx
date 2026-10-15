@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Users, List, Star, Heart, FileText } from "lucide-react";
+import { Calendar, Users, List, Star, Heart, FileText, BarChart3, Clock, Film, Tv, ThumbsUp, MessageSquare, Flame } from "lucide-react";
 import { MovieCard } from "@/components/MovieCard";
 import { toast } from "sonner";
 
@@ -25,6 +25,34 @@ interface ProfileStats {
   isFollowing: boolean;
 }
 
+interface UserStats {
+  username: string;
+  time: {
+    totalMinutes: number;
+    totalHours: number;
+    totalDays: number;
+  };
+  counts: {
+    watchedMovies: number;
+    watchedSeries: number;
+    watchedEpisodes: number;
+    showsFollowed: number;
+    watchlist: number;
+    reviews: number;
+    favorites: number;
+    customLists: number;
+  };
+  ratings: {
+    average: number;
+    total: number;
+    distribution: Record<number, number>;
+  };
+  engagement: {
+    likesReceived: number;
+    commentsReceived: number;
+  };
+}
+
 export function ProfileView({ username }: { username: string }) {
   const { token, user: currentUser } = useAuth();
   const [profile, setProfile] = useState<ProfileStats | null>(null);
@@ -33,12 +61,13 @@ export function ProfileView({ username }: { username: string }) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
 
-  const [activeTab, setActiveTab] = useState<"favorites" | "lists" | "reviews">("favorites");
+  const [activeTab, setActiveTab] = useState<"favorites" | "lists" | "reviews" | "stats">("favorites");
 
   // Tab Data States
   const [favorites, setFavorites] = useState<any[]>([]);
   const [lists, setLists] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const [loadingTab, setLoadingTab] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3333";
@@ -52,6 +81,7 @@ export function ProfileView({ username }: { username: string }) {
     if (activeTab === "favorites") fetchFavorites();
     if (activeTab === "lists") fetchLists();
     if (activeTab === "reviews") fetchReviews();
+    if (activeTab === "stats") fetchStats();
   }, [activeTab, profile, token]);
 
   const fetchProfile = async () => {
@@ -120,6 +150,23 @@ export function ProfileView({ username }: { username: string }) {
       if (res.ok) {
         const data = await res.json();
         setReviews(data.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingTab(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    setLoadingTab(true);
+    try {
+      const headers: Record<string, string> = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const res = await fetch(`${apiUrl}/users/${username}/stats`, { headers, cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        setStats(data);
       }
     } catch (err) {
       console.error(err);
@@ -278,6 +325,15 @@ export function ProfileView({ username }: { username: string }) {
           <Star className="w-4 h-4" />
           Avaliações ({profile.totalReviews})
         </button>
+        <button
+          onClick={() => setActiveTab("stats")}
+          className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 whitespace-nowrap ${
+            activeTab === "stats" ? "border-primary-500 text-primary-400" : "border-transparent text-zinc-400 hover:text-zinc-200"
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          Estatísticas
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -368,6 +424,152 @@ export function ProfileView({ username }: { username: string }) {
                       </div>
                     </div>
                   ))}
+                </div>
+              )
+            )}
+
+            {/* Stats Tab */}
+            {activeTab === "stats" && (
+              !stats ? (
+                <p className="text-zinc-500 text-center py-12">Carregando estatísticas...</p>
+              ) : (
+                <div className="space-y-8">
+                  {/* Hero banner de tempo assistido */}
+                  <div className="bg-gradient-to-r from-primary-950/60 via-zinc-900 to-zinc-900 border border-primary-900/40 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center shrink-0">
+                        <Clock className="w-8 h-8 text-primary-500" />
+                      </div>
+                      <div>
+                        <span className="text-xs uppercase font-bold tracking-widest text-primary-400">Tempo Total de Tela</span>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-3xl md:text-4xl font-extrabold text-white">
+                            {stats.time.totalHours.toLocaleString()}
+                          </span>
+                          <span className="text-lg text-zinc-400 font-medium">horas</span>
+                        </div>
+                        <p className="text-sm text-zinc-400 mt-1">
+                          Equivalente a <strong className="text-zinc-200">{stats.time.totalDays} dias inteiros</strong> assistindo a filmes e episódios.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4 w-full md:w-auto">
+                      <div className="flex-1 md:flex-initial bg-zinc-950/60 border border-zinc-800 rounded-xl px-5 py-3 text-center">
+                        <span className="text-xs text-zinc-500 uppercase font-semibold">Média das Notas</span>
+                        <div className="flex items-center justify-center gap-1 mt-1 text-xl font-bold text-yellow-500">
+                          <Star className="w-5 h-5 fill-yellow-500" />
+                          <span>{stats.ratings.average > 0 ? stats.ratings.average : "-"}</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 md:flex-initial bg-zinc-950/60 border border-zinc-800 rounded-xl px-5 py-3 text-center">
+                        <span className="text-xs text-zinc-500 uppercase font-semibold">Curtidas Recebidas</span>
+                        <div className="flex items-center justify-center gap-1 mt-1 text-xl font-bold text-red-500">
+                          <Flame className="w-5 h-5" />
+                          <span>{stats.engagement.likesReceived}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Grid de Contadores Principais */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                      <div className="flex items-center gap-3 mb-2 text-zinc-400">
+                        <Film className="w-5 h-5 text-primary-500" />
+                        <span className="text-xs uppercase font-semibold tracking-wider">Filmes Assistidos</span>
+                      </div>
+                      <span className="text-2xl md:text-3xl font-bold text-white">{stats.counts.watchedMovies}</span>
+                    </div>
+
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                      <div className="flex items-center gap-3 mb-2 text-zinc-400">
+                        <Tv className="w-5 h-5 text-primary-500" />
+                        <span className="text-xs uppercase font-semibold tracking-wider">Episódios Vistos</span>
+                      </div>
+                      <span className="text-2xl md:text-3xl font-bold text-white">{stats.counts.watchedEpisodes}</span>
+                      <span className="text-xs text-zinc-500 block mt-1">{stats.counts.showsFollowed} séries acompanhadas</span>
+                    </div>
+
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                      <div className="flex items-center gap-3 mb-2 text-zinc-400">
+                        <FileText className="w-5 h-5 text-primary-500" />
+                        <span className="text-xs uppercase font-semibold tracking-wider">Resenhas Escritas</span>
+                      </div>
+                      <span className="text-2xl md:text-3xl font-bold text-white">{stats.counts.reviews}</span>
+                    </div>
+
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                      <div className="flex items-center gap-3 mb-2 text-zinc-400">
+                        <List className="w-5 h-5 text-primary-500" />
+                        <span className="text-xs uppercase font-semibold tracking-wider">Listas Criadas</span>
+                      </div>
+                      <span className="text-2xl md:text-3xl font-bold text-white">{stats.counts.customLists}</span>
+                    </div>
+                  </div>
+
+                  {/* Distribuição de Notas (Histograma Letterboxd style) */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 md:p-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-lg font-bold text-white">Distribuição de Avaliações</h3>
+                        <p className="text-xs text-zinc-400">Histograma de notas concedidas pelo usuário (1 a 5 estrelas)</p>
+                      </div>
+                      <span className="text-xs font-semibold text-zinc-500 bg-zinc-800 px-3 py-1 rounded-full">
+                        {stats.ratings.total} avaliações
+                      </span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {[5, 4, 3, 2, 1].map((star) => {
+                        const count = stats.ratings.distribution[star] || 0;
+                        const percentage = stats.ratings.total > 0 
+                          ? Math.round((count / stats.ratings.total) * 100) 
+                          : 0;
+
+                        return (
+                          <div key={star} className="flex items-center gap-3 text-sm">
+                            <div className="flex items-center gap-1 w-12 text-zinc-300 font-medium shrink-0">
+                              <span>{star}</span>
+                              <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                            </div>
+                            <div className="flex-1 bg-zinc-950 h-5 rounded-full overflow-hidden p-0.5 border border-zinc-800">
+                              <div
+                                className="bg-gradient-to-r from-primary-600 to-primary-500 h-full rounded-full transition-all duration-500"
+                                style={{ width: `${percentage}%` }}
+                              />
+                            </div>
+                            <span className="w-16 text-right text-xs font-semibold text-zinc-400 shrink-0">
+                              {count} ({percentage}%)
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Resumo da Comunidade */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 flex items-center gap-4">
+                      <div className="p-3 bg-red-500/10 rounded-xl text-red-500">
+                        <ThumbsUp className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <span className="text-2xl font-bold text-white">{stats.engagement.likesReceived}</span>
+                        <p className="text-xs text-zinc-400">Curtidas recebidas em comentários e avaliações</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 flex items-center gap-4">
+                      <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500">
+                        <MessageSquare className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <span className="text-2xl font-bold text-white">{stats.engagement.commentsReceived}</span>
+                        <p className="text-xs text-zinc-400">Respostas e comentários recebidos da comunidade</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )
             )}
